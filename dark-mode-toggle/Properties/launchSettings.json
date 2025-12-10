@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "dark-mode-toggle (Package)": {
+      "commandName": "MsixPackage"
+    },
+    "dark-mode-toggle (Unpackaged)": {
+      "commandName": "Project"
+    }
+  }
+}
