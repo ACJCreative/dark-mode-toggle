@@ -38,10 +38,10 @@
         DisplayName="Dark Mode Toggle"
         Description="Dark Mode Toggle. Sits in your notification area / system tray. Click it to toggle Windows dark or light mode."
         BackgroundColor="transparent"
-        Square150x150Logo="Assets\Square150x150Logo.png"
-        Square44x44Logo="Assets\Square44x44Logo.png">
-        <uap:DefaultTile Wide310x150Logo="Assets\Wide310x150Logo.png" />
-        <uap:SplashScreen Image="Assets\SplashScreen.png" />
+        Square150x150Logo="Assets\StoreLogo.png"
+        Square44x44Logo="Assets\StoreLogo.png">
+        <uap:DefaultTile Wide310x150Logo="Assets\StoreLogo" />
+        <uap:SplashScreen Image="Assets\StoreLogo.png" />
       </uap:VisualElements>
       <Extensions>
         <desktop:Extension Category="windows.startupTask">
