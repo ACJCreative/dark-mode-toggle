@@ -12,6 +12,7 @@ namespace dark_mode_toggle
     {
         private readonly Services.SettingsService _settingsService;
         private readonly Services.SchedulerService _schedulerService;
+        private readonly AppWindow _appWindow;
 
         internal SettingsWindow(Services.SettingsService settingsService, Services.SchedulerService schedulerService)
         {
@@ -21,10 +22,11 @@ namespace dark_mode_toggle
 
             var hWnd = WindowNative.GetWindowHandle(this);
             var windowId = Microsoft.UI.Win32Interop.GetWindowIdFromWindow(hWnd);
-            var appWindow = AppWindow.GetFromWindowId(windowId);
-            appWindow.Resize(new SizeInt32(360, 360));
+            _appWindow = AppWindow.GetFromWindowId(windowId);
+            _appWindow.Resize(new SizeInt32(360, 360));
+            _appWindow.Closing += OnCloseRequested;
             var iconPath = Path.Combine(Package.Current.InstalledLocation.Path, "Assets", "TrayIcon.ico");
-            appWindow.SetIcon(iconPath);
+            _appWindow.SetIcon(iconPath);
 
             ScheduleToggleSwitch.IsOn = _settingsService.IsScheduleEnabled;
             StartTimePicker.Time = _settingsService.LightModeStart;
@@ -56,6 +58,12 @@ namespace dark_mode_toggle
             var enabled = ScheduleToggleSwitch.IsOn;
             StartTimePicker.IsEnabled = enabled;
             EndTimePicker.IsEnabled = enabled;
+        }
+
+        private void OnCloseRequested(AppWindow sender, AppWindowClosingEventArgs args)
+        {
+            args.Cancel = true;
+            sender.Hide();
         }
     }
 }

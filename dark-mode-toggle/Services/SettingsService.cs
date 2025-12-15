@@ -118,3 +118,4 @@ namespace dark_mode_toggle.Services
         }
     }
 }
+
