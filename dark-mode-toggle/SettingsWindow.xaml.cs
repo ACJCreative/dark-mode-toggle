@@ -1,6 +1,8 @@
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Windowing;
+using System.IO;
+using Windows.ApplicationModel;
 using Windows.Graphics;
 using WinRT.Interop;
 
@@ -21,6 +23,8 @@ namespace dark_mode_toggle
             var windowId = Microsoft.UI.Win32Interop.GetWindowIdFromWindow(hWnd);
             var appWindow = AppWindow.GetFromWindowId(windowId);
             appWindow.Resize(new SizeInt32(360, 360));
+            var iconPath = Path.Combine(Package.Current.InstalledLocation.Path, "Assets", "TrayIcon.ico");
+            appWindow.SetIcon(iconPath);
 
             ScheduleToggleSwitch.IsOn = _settingsService.IsScheduleEnabled;
             StartTimePicker.Time = _settingsService.LightModeStart;
