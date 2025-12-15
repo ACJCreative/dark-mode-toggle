@@ -14,10 +14,20 @@ namespace dark_mode_toggle.Services
 
         public void ToggleTheme()
         {
-            var newValue = IsDarkModeEnabled ? 1 : 0;
+            SetTheme(!IsDarkModeEnabled);
+        }
+
+        public void SetTheme(bool isDark)
+        {
+            var newValue = isDark ? 0 : 1;
+            ApplyTheme(newValue);
+        }
+
+        private static void ApplyTheme(int value)
+        {
             using var personalizeKey = Registry.CurrentUser.CreateSubKey(PersonalizeKey, RegistryKeyPermissionCheck.ReadWriteSubTree);
-            personalizeKey?.SetValue(AppsUseLightTheme, newValue, RegistryValueKind.DWord);
-            personalizeKey?.SetValue(SystemUsesLightTheme, newValue, RegistryValueKind.DWord);
+            personalizeKey?.SetValue(AppsUseLightTheme, value, RegistryValueKind.DWord);
+            personalizeKey?.SetValue(SystemUsesLightTheme, value, RegistryValueKind.DWord);
 
             NativeMethods.BroadcastSettingChange("ImmersiveColorSet");
         }
@@ -47,4 +57,5 @@ namespace dark_mode_toggle.Services
         }
     }
 }
+
 

@@ -9,6 +9,7 @@ namespace dark_mode_toggle.Services
     {
         private const int MenuToggleId = 1;
         private const int MenuExitId = 2;
+        private const int MenuSettingsId = 3;
         private const uint WmTrayIcon = NativeMethods.WmApp + 1;
         private const uint WmRButtonUp = 0x0205;
         private const uint WmLButtonUp = 0x0202;
@@ -18,16 +19,19 @@ namespace dark_mode_toggle.Services
         private NotifyIconData _notifyIconData;
         private readonly MessageWindow _messageWindow;
         private readonly Action _toggleAction;
+        private readonly Action _settingsAction;
         private readonly Action _exitAction;
         private bool _disposed;
 
-        public TrayIcon(Action toggleAction, Action exitAction)
+        public TrayIcon(Action toggleAction, Action settingsAction, Action exitAction)
         {
             _toggleAction = toggleAction ?? throw new ArgumentNullException(nameof(toggleAction));
+            _settingsAction = settingsAction ?? throw new ArgumentNullException(nameof(settingsAction));
             _exitAction = exitAction ?? throw new ArgumentNullException(nameof(exitAction));
 
             _menuHandle = NativeMethods.CreatePopupMenu();
             NativeMethods.AppendMenu(_menuHandle, NativeMethods.MfString, MenuToggleId, "Toggle Dark/Light");
+            NativeMethods.AppendMenu(_menuHandle, NativeMethods.MfString, MenuSettingsId, "Settings");
             NativeMethods.AppendMenu(_menuHandle, NativeMethods.MfSeparator, 0, string.Empty);
             NativeMethods.AppendMenu(_menuHandle, NativeMethods.MfString, MenuExitId, "Exit");
 
@@ -79,9 +83,17 @@ namespace dark_mode_toggle.Services
             {
                 _toggleAction();
             }
+            else if (command == MenuSettingsId)
+            {
+                _settingsAction();
+            }
             else if (command == MenuExitId)
             {
                 _exitAction();
+            }
+            else if (command == MenuSettingsId)
+            {
+                _settingsAction();
             }
         }
 

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Threading.Tasks;
 using dark_mode_toggle.Services;
 using Microsoft.UI.Xaml;
@@ -16,7 +16,10 @@ namespace dark_mode_toggle
     {
         private const string StartupTaskId = "DarkModeToggleStartupTask";
         private readonly ThemeService _themeService = new();
+        private readonly Services.SettingsService _settingsService = new();
+        private Services.SchedulerService? _schedulerService;
         private TrayIcon? _trayIcon;
+        private SettingsWindow? _settingsWindow;
         private bool _isExiting;
 
         public App()
@@ -28,7 +31,8 @@ namespace dark_mode_toggle
         {
             if (_trayIcon is null)
             {
-                _trayIcon = new TrayIcon(_themeService.ToggleTheme, RequestExit);
+                _schedulerService = new Services.SchedulerService(_settingsService, _themeService);
+                _trayIcon = new TrayIcon(ToggleThemeAndRecordOverride, ShowSettingsWindow, RequestExit);
             }
 
             await EnsureStartupTaskEnabledAsync().ConfigureAwait(false);
@@ -59,6 +63,7 @@ namespace dark_mode_toggle
 
             _isExiting = true;
             DisposeTrayIcon();
+            DisposeSchedulerService();
             Current.Exit();
         }
 
@@ -66,6 +71,36 @@ namespace dark_mode_toggle
         {
             _trayIcon?.Dispose();
             _trayIcon = null;
+        }
+
+        private void DisposeSchedulerService()
+        {
+            _schedulerService?.Dispose();
+            _schedulerService = null;
+        }
+
+        private void ToggleThemeAndRecordOverride()
+        {
+            _themeService.ToggleTheme();
+            _schedulerService?.NotifyManualToggle();
+        }
+
+        private void ShowSettingsWindow()
+        {
+            if (_schedulerService is null)
+            {
+                return;
+            }
+
+            if (_settingsWindow is not null)
+            {
+                _settingsWindow.Activate();
+                return;
+            }
+
+            _settingsWindow = new SettingsWindow(_settingsService, _schedulerService);
+            _settingsWindow.Closed += (_, _) => _settingsWindow = null;
+            _settingsWindow.Activate();
         }
     }
 }
